@@ -1,25 +1,20 @@
-﻿#include <iostream>
-#include <vector>
-#include <algorithm>
+﻿#include <thread>
+#include <iostream>
+#include <mutex>
 
-class C {
-public:
-	int a;
-	C(int a) {
-		std::cout << "C constructor called" << std::endl;
-		std::cout << a << std::endl;
-	}
-};
+int myAccount = 0;
+std::mutex mtx;
 
-class CC {
-	C c = C(10);
-public:
-	CC(int a)  {
-		c.a = a;
-		std::cout << "CC constructor called" << std::endl;
-	}
-};
+void addMoney() {
+	mtx.lock();
+	++myAccount;
+	mtx.unlock();
+}
 
 int main() {
-	CC cc(0);
+	std::thread t1(addMoney);
+	std::thread t2(addMoney);
+	t1.join();
+	t2.join();
+	std::cout << myAccount << std::endl; // expected 2 but can can be not
 }

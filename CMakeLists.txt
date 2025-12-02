@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
-project(CPPTesting)
+project(ThreadsCPPTesting)
 
 set(SRCS main.cpp)
 

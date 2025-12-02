@@ -1,682 +1,181 @@
-﻿Литералы 
+﻿https://www.youtube.com/watch?v=TPVH_coGAQs&list=PLk6CEY9XxSIAeK-EAh3hB4fgNvYkYmghp
 
-Литералы в программировании — это фиксированные значения, 
-которые непосредственно записаны в исходном коде программы. 
-Они представляют собой конкретные данные, такие как числа, строки, символы и логические значения. 
-Литералы не изменяются во время выполнения программы и служат для задания начальных значений переменных или для использования в выражениях.
+как создать thread in c++
 
 
-Point of declaration
-int x = x;
-так можно писать потому что x уже существует и его можно использовать 
+std::thread t1(); // threads нужен вызываемый объект 
+// три способа создать вызываемый объект
 
-One definition rule (ODR)
-Каждая сущность (переменная, функция, класс и т.д.) должна быть определена ровно один раз в одной программе.
-Если сущность определена более одного раза, это приводит к ошибкам компиляции или линковки.
-Объявлять можно сколько угодно раз.
-Это нужно например для рекурсии. Или для вызова функции до её определения.
-
-void f();
-void g() {f();}
-void f() {}
-
-Определение переменных прям вот так происходит
-int x; // объявление и определение
-Если нужно только объявить, то
-extern int x; // только объявление
-
-А класса можно объявить так
-class MyClass; // объявление класса
-А определение класса будет
-class MyClass {};
-Но классы можно определять много раз в разных файлах, если они одинаковые.
-Это нужно чтобы можно было их хедеры использовать в разных файлах.
-
-
-Lvalue
-++a вернули новое 
-Rvalue
-a++ вернули то что было и это временное значение
-
-++a++ так можно? сначала делается a++ а оператор ++ можно
-применить только к lvalue, а a++ это rvalue
-++(a++)
-
-
-a++ ++ + b
-так можно?
-парсинг идет так
-набираем столько символов пока это имеет смысл 
-++ нельзя двара раз 
-
-а вот так можно
-++ ++ a
-
-Тренарный оператор
-b ? a++ : ++a
-такое не прокатит потому что a++ это rvalue а ++a это lvalue
-а у тернарного оператора должен быть одинаковый тип возвращаемого значения в обеих ветках
-
-
-
-Sizeof 
-Оператор sizeof возвращает размер типа или объекта в байтах.
-Но sizeof не вычисляет выражение, а просто определяет его тип.
-
-	std::vector<Tmp> vec;
-	vec.push_back(Tmp());
-	vec.push_back(Tmp());
-	vec.push_back(Tmp());
-
-	std::cout << sizeof(vec) << std::endl; 
-	32 
-
-	std::vector<Tmp> vec1;
-	std::cout << sizeof(vec) << std::endl; 
-	32 
-
-class Tmp {
-	int a; // 4
-	int b; // 4
-	double c; // 8
-	char d; // 1
-}; // всего 17 байт кратно 8 байтам выравнивания будет 24 нам нужно число чтобы 
-следующее значение начиналось с адреса кратного 8
-
-std::cout << sizeof(Tmp) << std::endl; // 24 за счет выравнивания
-
-
-Типы ошибок компиляции
-Лексические Семанические Синтаксические
-	
-	Лексические ошибки возникают на этапе лексического анализа, 
-	когда компилятор пытается разбить исходный код на токены (значащие слова
-	int, main). Лексические парсрер представвляет программу как последовательность 
-	идентификаторов, ключевых слов, литералов и операторов.
-	int x; // int x - - это токены
-	std::cin >> x; // std :: cin >> x - это токены
-	Пример
-	\\; // неверный символ \
-	Можно ли это это разбить на токены?
-
-	Синтаксический разбор происходит после лексического анализа.
-	Мы пытаеся понять что означают эти токены в контексте грамматики языка.
-	Это могут быть объявлениe, выражения, операторы, управлюящая констркуция и т.д.
-	Синтаскическое дерево строится на основе правил грамматики языка.
-	На верху будет оператор с наименьшим приоритетом, а внизу с наибольшим. И от него строится
-	дерево.
-	std::cout << x +;+ // ошибка синтаксиса, потому что выражение не завершено
-	Можно ли это понять как выражение?
-
-	Семантический анализ происходит после синтаксического разбора.
-	На этом этапе компилятор проверяет смысловую корректность программы.
-	Например, проверяет типы данных, области видимости переменных,
-	Можно ли это все понять как корректную программу?
-
-Runtime error
-Segmentation fault 
-	Возникает когда программа пытается получить доступ к памяти, к которой 
-	у нас нет прав доступа.
-Floating point exception
-	Возникает при ошибках с плавающей точкой, например деление на ноль.
-	std::cout << 1.0 / 0.0 << std::endl;
-Aborted (core dumped)
-	Программа была аварийно завершена из-за серьезной ошибки.
-	Это может быть вызвано различными причинами, такими как нарушение целостности памяти,
-	ошибки в логике программы или использование некорректных указателей.
-
-Undefined behavior
-	Это ситуация, когда поведение программы не определено стандартом языка.
-	Например, доступ к неинициализированной памяти или выход за границы массива.
-	std::cout << arr[10] << std::endl; // если arr имеет размер меньше 11
-	Можно упасть а можно нет
-	int x;
-	std::cout << x << std::endl; // x не инициализирована хз что выведет
-
-int main(){
-	for(int i = 0; i < 300; ++i){
-	std::cout << i << '' << i * 12345678 < <std::endl;
+1. Pointer to function ->
+	void someFunction(int someArgs) {
+	// Function code here
 	}
-}
-тут комплиторя может оптимизировать код и сделать бесконечный цикл 
-потому что выкинет условие выхода из цикла
-так как 300 * 12345678 это число большее чем может вместить int
-но мы предполагаем что у нас нет UB по стандарту
-то есть i < 174 значт i < 300 
+	std::thread t1(someFunction, someArgs); // here we create thread and run someFunction in this thread
+	t1.join(); // the threas in witch we create t1 will wait until t1 finish its work
 
-
-Указатели
-int main(int argc, char** argv) {
-	int a = 10;
-	int* p = &a;
-	std::cout << p << std::endl;
-	std::cout << ++p << std::endl;
-
-	double d = 10;
-	double* pd = &d;
-	std::cout << pd << std::endl; // 0x628
-	std::cout << ++pd << std::endl; // 0x630 потому что double занимает 8 байт
-}
-
-0x628
-0x629
-0x62A
-0x62B	
-0x62C
-0x62D
-0x62E
-0x62F
-0x630
-
-nullptr vs null 
-	nullptr специальное значение указателя в C++11 и выше, обозначающее ноль типа указателя.
-	чем null отличается от nullptr?
-	null это макрос из C, который обычно определен как 0 или ((void*)0).
-
-первое отличие:
-void process(int value) { }
-void process(void* ptr) { }
-
-process(0);        // Вызывает process(int) - ожидаемо
-process(NULL);     // Может вызвать process(int) - неожиданно!
-process(nullptr);  // Однозначно вызывает process(void*)
-
-второе отличие:
-// Проблема с NULL:
-void func(int) { }
-void func(char*) { }
-
-func(NULL);    // Неоднозначность! Что вызвать?
-               // Обычно вызывается func(int) - не то что ожидалось!
-
-// Решение с nullptr:
-func(nullptr); // Однозначно вызывает func(char*)
-
-auto result1 = NULL;    // тип обычно int или long (зависит от реализации)
-auto result2 = nullptr; // тип всегда std::nullptr_t
-
-nullptr имеет тип std::nullptr_t
-
-// true и false тоже имеют тип bool!
-
-
-Память
-	Код проаграммы	 Статическая Автоматическая Динамическая
-	Text	         Data        Stack			Heap
-Text это машинный код программы
-
-Data (Статическая) это глобальные и статические переменные, литералы таблицы виртульных функций
-то что хранится на протяжении всей работы программы
-static int a; // теперь мы в data или статической памяти 
-static int a [10 000 000 ]; тут мы можем хранить больше чем в стеке потому что стек ограничен по размеру
-а тут нет ограничений по размеру кроме общей памяти системы
-
-Stack (Автоматическая) это локальные переменные объявленные внутри функций
-Стек занимает 8 МБайт
-Тут поддержвается stack pointer 
-Когда мы добавляем функцию то нужно еще хранить адрес возврата 
-куда вернуть после завершения функции
-
-
-Heap память выдается в runtime ее размер в отличии от стека неограничен и не 
-извстен заранее
-
-Забавный оператор запятая
-	delete p, pp;
-	тут мы удалим только p потому что это парсится 
-	как ( delete p ), pp;
-	delete (p, pp);
-	тут мы удалим pp потому что оператор запятая возвращает последнее значение
-
-
-Имя массива это указатель на первый элемент массива
-int a[5];
-*(a+3) = 10 // Array to pointer conversion
-a[3] = 10 // Array to pointer conversion
-a[2] == *(a + 2);
-Массивы и указатели взаимозаменяемы в большинстве контекстов.
-int* p = a + 3;
-p[-1] = 20; // эквивалентно a[2] = 20;
-2[a] == *(a + 2); // тоже самое что и a[2] = 20;)
-
-Отличия 
-int a[10];
-int b[10];
-a = b; // Ошибка: нельзя присвоить массив
-++a; // Ошибка: нельзя увеличить массив
-a+=1; // Ошибка: нельзя изменить адрес массива
-
-sizeof(a); // Возвращает размер всего массива (10 * sizeof(int))
-sizeof(p); // Возвращает размер указателя (обычно 4 или 8 байт))
-
-
-// Тут нет отличия redifinition
-приколь в том что если бы мы передавали ппрям как целый массив
-то мы должны были бы копировать весь массив что дорого по времени и памяти
-void func(int* arr); // то же самое
-void func(int arr[10]); // arr воспринимается как int*
-
-int* a = new int[100];
-delete[] a; // как мы узнаем что нужно удалить 100? мы храним это число 
-перед самими массивом его размер
-
-Массивы переменной длины
-int n;
-cin >> n;
-
-int arr[n]; // Это массив переменной длины (VLA) variable-length array
-Это не стандарт C++ но многие компиляторы поддерживают это расширение
-В С это было возможно 
-В С++ нежелательно но поддерживаются для обратной совместимости с С
-Почему запретили?
-Дополнительные расходы в runtime
-Вот мы кинули такое чудо на стек и затем захотели еще накидать чего-то другого
-то как быть то? а если мы не влезем? 
-
-int a[5][5];
-int* b[5]; массив из 5 указателей на int или указатель на массив из 5 int?
-это массив из 5 указателей на int. читай справа потом на лево 
-как и тут ++(a++); читаем сначала справа потом налево
-
-int (*c)[5]; // указатель на массив из 5 int;
-
-void f(int**) {} // 1 
-void f(int (*)[5]) {})
-vid f(int* [5]) {} // 1
-
-Указатель на функцию
-
-void func(int a) {
-	std::cout << "Function called with value: " << a << std::endl;
-}
-
-int main() {
-	// Объявление указателя на функцию
-	void (*funcPtr)(int) = &func;
-	// Вызов функции через указатель
-	funcPtr(42);
-	return 0;
-}
-
-int add(int a, int b) {
-	return a + b;
-}
-
-int main() {
-	// Объявление указателя на функцию
-	int (*operation)(int, int) = &add;
-	// Вызов функции через указатель
-	int result = operation(5, 3);
-	std::cout << "Result: " << result << std::endl; // Output: Result: 8
-	return 0;
-}
-
-bool compare(int a, int b) {
-	return a < b;
-}
-
-int main() {
-	int arr[] = {5, 2, 9, 1, 5, 6};
-
-	bool (*cmpPtr)(int, int) = &compare;
-	// bool (*cmpPtr)(int, int) = compare; // тоже самое Function to pointer conversion
-
-	std::sort(arr, arr + n, &compare);
-	return 0;
-}
-
-
-void f(int){}
-void f(double){}
-
-int main(){	
-	void (*p)(int) = &f; // OK так как мы знаем что слева int
-}
-
-variadic functions 
-
-void log(const char* format...) {
-	va_list args;
-	va_start(args, format);
-	vprintf(format, args);
-	va_end(args);
-}
-
-
-Ссылки 
-	Ссылка это просто имя для другой переменной.	
-	Ссылка должна быть инициализирована при объявлении и не может быть изменена
-	И она должна быть проинциализирована lvalue не rvalue
-	int a = 10;
-	int& ref = a; // ref это ссылка на a
-	int b = 20;
-	ref = b; // это не изменение ссылки, а присвоение значения b в a
-	std::cout << a << std::endl; // 20
-
-	Но const ссылка может быть инициализирована rvalue
-	const int& ref = 10; // ok
-
-
-	void f(int& x);
-	void f(int x); 
-	f(x); тут ошибка компиляции если есть обе функции
-
-	int& g(int&x){return ++x;}
-	g(x) = 6;
-	v[x] = 6; // вот где это реально надо
-
-	Забавное так мы пишем в x то что лежит по p2
-	int* p = &x;
-	*p = *p2; 
-
-	Висячая ссылка 
-	int& f(int x){
-		int y = 10;
-		return y;
+	void someFunction(int& someArgs) {
+	// Function code here
 	}
-	int x = 0;
-	int z = f(x);
-
-	Еще веселое
-	int& g(){
-		int* p = new int(1);
-		return *p;
+	// To pass smth by reference we need to use std::ref
+	std::thread t1(someFunction, std::ref(someArgs));
+	Зачем и почему
+	void fun(int& param) {
+		param += 10;
 	}
 
-	int& x = g();
-	delete &x;
-
-	Ссылка на указатель
-	int x = 0;
-	int* p =&x;
-	int* &refToPointer = p; // читаем справа ссылка на указатель
-	Не существует типа указатель на ссыку
-	
-	Ссылка на массив 
-	int a[10];
-	int (&b)[10] = a;
-
-	Массив из ссылок нельзя создать тк его нужно сразу проиницилировать 
-	просто потому что это запрещено
-
-	Ссылка на функцию
-	void (&g)(int) = f;
-
-
-Константы
-	Это другой тип у которых часть операций нет
-	В С нет коснтант
-	char* a = "abcd"; // так нельзя формально но можно для совместимости
-	с С потому что "abcd" это const char* 
-
-	const int* pc = p;
-	int* const pc;
-
-	навешивать констатность можно обратно нет
-	int* p = &x;
-	const int* pc - p; // OK
-	int* p2 = pc; // CE
-
-	int x = 5;
-	const int*p = &x;
-	++x;
-	cout << *p; // 6
-
-	int x = 5;
-	const int& r = x;
-	int const& rr = x; // ok the same as above
-	int& const rrr = x // ce no reason to type const from right side 
-	// ссылка она как константный указатель мы как бы два раза тут говорим const 
-
-	константная ссылка хотя правильнее ссылка на контсанту просто сама ссылка по опрделению констная
-	const int& r = x;
-	константнаый указатель 
-	int * const p = &x;
-	указатель на константу 
-	const int * p = &x;
-
-	констная ссылка может быть проиницилизорована через rvalue
-	const int& x = 5;
-	сделано чтобы можно было в функцию передавать так
-	void f(const string& s);
-
-	продление время жизни 
-	работает только для локальных переменных
-	const string& s = "adsfadsfasd";
-	вот это "adsfadsfasd" уничтожится когда уничтожится s
-	data  stack                  heap
-	"aaa" s with pointer to the "aaä"
-	тут копия будет 
-
-	void f(int x); лучше чем void f(int* x);
-	потому что разыменовывать указатель это дольше чем просто использовать
-	значение и нет выиграша от указателя или ссылке он весит столько же
-
-	почему нельзя такое же сделать для обычных ссылок? 
-	string& s = "asdfasfd"; 
-	решение от Страуструпа так нельзя
-	пример почему плохо 
-	
-	void g(size_t & y){
-		++y;
+	int main() {
+		int x = 5;
+		std::thread t(fun, x);  
 	}
-	int main(){
-		int x = 0;
-		g(x);
-		cout << x;
+	Все аргументы копируются в память потока
+	Ссылка также копируется
+	Поток сделает временный int, далее копирует x в него и передает 
+	ссылку на временный int в функцию fun
+
+	Компилятор развернет во что-то такое
+	void thread_function(void* data) {
+		int copied_x = *static_cast<int*>(data);  
+	    fun(copied_x); 
 	}
-	Представим что это все компилится (это запрещено коммитетом)
-	но выведется ноль
-	потому что ссылка может привязаться только к типу с которым она 
-	полностью совпадает 
-	тут будет копия на size_t 
 
-	еще чудесней
-	int x = 10;
-	const double& y = x;
-	тут будет временный DOUBLE и меняем x но наш y не менятеся
+	int main() {
+	    int x = 5;
+	    int copy_for_thread = x;  // Копия!
+	    start_thread(thread_function, &copy_for_thread);
+	}
 
-	const int** cpp = pp;
-	нельзя неявно навешивать конст под два указателя
-	const char x = 'a';
-	char* p = nullptr;
-	const char** q = &p;
-	*q = &x;
-	*p = 'b';
-	std::cout << x;
-
-Приведения типов 
-	static_cast
-		int a = 10;
-		double b = static_cast<double>(a); // static_cast
-		вниз тоже можно обрубим double до int
+	С указателем кстати бы сработало
 	
-	reinterpret_cast делается к ссылке или указтелю
-		берем байты одного типа и интерпретируем их как другой тип
-		int a = 10;
-		char* p = reinterpret_cast<char*>(&a); // reinterpret_cast
-		char& p = reinterpret_cast<char&>(a); // reinterpret_cast
-		// зачем ссылка? мы позволяем посмотреть на старый объект по новому 
-		Он не работает с константностью
+	void fun(int* x) {
+		*x += 10;
+	}
 	
-	const_cast делается к ссылке или указтелю
-		const int a = 10;
-		int* p = const_cast<int*>(&a); // const_cast
-		*p = 20; 
-		std::cout << "Value of a: " << a << std::endl; // Undefined behavior
-		// 10 или 20 хз компилятор может оптимизировать и не менять значение a но оставить 10
-
-		void f(const int& x) {
-			int& y = const_cast<int&>(x); // const_cast
-			y = 20; // Undefined behavior
-		} а нам дали не константу в ссылку и мы можем дебажить это 
-	
-	C-style cast 
-		сначала это const_cast потом static_cast потом reinterpret_cast
-		int a = 10;
-		double b = (double)a; // C-style cast
-		1. Const cast
-		А где C-style cast НЕ будет использовать const_cast?
-		Когда типы fundamentally different (принципиально разные). 
-		const_cast не сможет преобразовать const int* в double*, даже если убрать константность. 
-		Типы все равно несовместимы. В этом случае C-style cast перейдет к static_cast или reinterpret_cast.
-		2. Static cast
-		Где не сработает (сам по себе):
-		Преобразование между несвязанными типами указателей (например, int* к double*).
-		Преобразование указателя в несвязанный с ним тип указателя 
-		(например, void*, полученный из char*, обратно в int*).
-		Преобразование указателя в целочисленный тип (и наоборот), если это не void*.
-		3. Reinterpret cast
-		Где не сработает (сам по себе):
-		reinterpret_cast не может убрать константность. Он может изменить тип, но не квалификаторы.
-		не сработает когда нужен dynamic_cast
-		class Base { 
-			public:
-			    virtual ~Base() = default; 
-			};
-		class Derived : public Base {};
-		class OtherDerived : public Base {};
-		
-		Base* base_ptr = new Derived();
-		
-		// C-style cast не может сделать безопасное приведение вниз
-		Derived* derived = (Derived*)base_ptr; // Работает, но ОПАСНО!
-		// Это использует static_cast под капотом - без проверки типа!
-		
-		// А вот это C-style cast сделать НЕ МОЖЕТ:
-		Base* really_other = new OtherDerived();
-		Derived* bad_cast = (Derived*)really_other; // Компилируется, но это UB!
-		// Правильно было бы использовать:
-		Derived* good_cast = dynamic_cast<Derived*>(really_other); // Вернет nullptr
-		dynamic_cast делает то, что не могут делать другие касты - проверку типа во время выполнения 
-		(RTTI - Runtime Type Information):
-		Смотрит реальный тип объекта во время выполнения через vtable
-
-		Нарушаются правила доступа (private/protected наследование)
-		Преобразования между совершенно несвязанными типами
-
-	dynamic_cast
-
-	Стадии сборки программы
-		Препроцессинг это обработка директив препроцессора такие как
-		#include и #define #pragma и условная компиляция #ifdef
-		Компиляция и ассемблирование это преобразование исходного кода в машинный код
-		Линковка это объединение всех объектных файлов и библиотек в единый исполняемый файл
-	
-Санитайзеры
-	AddressSanitizer (ASan) это инструмент для обнаружения ошибок работы с памятью
-		таких как выход за границы массива, использование после освобождения памяти (use-after-free)
-		и утечки памяти.
-	ThreadSanitizer (TSan) это инструмент для обнаружения ошибок конкурентного доступа к памяти
-		в многопоточных программах, таких как гонки данных
-	LeakSanitizer (LSan) это инструмент для обнаружения утечек памяти в программах.
-
-
-3. Введедние в ООП
-	3.1 Класссы и структоры и инкапсуляция
-	struct S{
-	    int a;    // 4 
-		double b; // 8
-	};}
-	
-	размер структуры это сумма размеров всех полей с учетом выравнивания
-	тут будет 16 байт потому что int 4 байта + 4 байта паддинга + double 8 байт
-	компилятор кладет 8 байтный double на адрес кратный 8 удобно в массиве 
-
-	struct S{
-	    int a;    // 4 
-		double b; // 8
-		char c;   // 1
-	};}
-	тут размер структуры будет 24 байта
-
-	struct S{
-	    int a;    // 4 
-		double b; // 8
-		struct SS{
-			char a;
-		} ss; 
-	};}
-	тут размер будет 16  потому что SS еще не существует
-	если мы сделаем SS ss; то будет 24 байта
-
-	S::SS ss; так можно достучаться до вложенной структуры
-
-	struct S {
-		private:
-			int a;    // 4 
-			double b; // 8
-		public:
-			int GetA() const { return a; }
-			double GetB() const { return b; }
-		};
-		
 	int main(int argc, char* argv[]) {
-		S s;
 	
-		reinterpret_cast<int&>(s) = 12;
-		std::cout << s.GetA() << std::endl;
-	
-		char* tmp = reinterpret_cast<char*>(&s) + 8;
-		reinterpret_cast<double&>(*tmp) = 34.56;
-		std::cout << s.GetB() << std::endl;
+		int x = 5;
+		int* p = &x;
+		std::thread t(fun, p);
+		t.join();
+		std::cout << "x = " << x << std::endl; // x should be 15
 	}
-
-	class C{
+	
+	std::ref создает std::reference_wrapper<T> - специальную обертку, которая:
+	Может копироваться (как требует std::thread)
+	Неявно преобразуется к ссылке на оригинальный объект
+	Сохраняет семантику ссылки при использовании
+	template<typename T>
+	class reference_wrapper {
 	private:
-		void f(int){}
-	public:	
-		void f(float){}
+	    T* ptr;  // Храним указатель!
+	    
+	public:
+	    // Конструктор - принимает ссылку, сохраняем указатель
+	    reference_wrapper(T& ref) : ptr(&ref) {}
+	    
+	    // Неявное преобразование обратно к ссылке
+	    operator T&() const { return *ptr; }
+	    
+	    // Явное получение ссылки
+	    T& get() const { return *ptr; }
+	    
+	    // Перегрузка оператора вызова функции
+	    template<typename... Args>
+	    auto operator()(Args&&... args) const 
+	        -> decltype(std::invoke(get(), std::forward<Args>(args)...)) {
+	        return std::invoke(get(), std::forward<Args>(args)...);
+	    }
+	};
+	template<typename T>
+	reference_wrapper<T> ref(T& t) noexcept {
+	    return reference_wrapper<T>(t);
 	}
+	void print(int& ref) {
+    std::cout << ref;
+	}
+	
+	print(rw);  // Магия! Неявное преобразование:
+	// rw.operator int&() вызывается, возвращает *ptr
+	// print получает int& на оригинальный x
+	Что такое std::bind?
+	Это способ создать новую функцию, "привязав" (bind) 
+	часть аргументов существующей функции к конкретным значениям.
+	А вызвать позже
+
+2. Labmda function
+
+	auto fun = [](int someArgs) {
+	// Function code here
+	} ;
+	std::thread t1(fun, someArgs);
+
+3. Functors
+	class Functor {
+	public:
+		void operator()(int someArgs) {
+			// Function code here
+		}
+	};
+	Functor functor;
+	std::thread t1(functor, someArgs);
+
+4. Non-static member function
+	class MyClass {
+	public:
+		void memberFunction(int someArgs) {
+			// Function code here
+		}
+	};
+	MyClass obj;
+	std::thread t1(&MyClass::memberFunction, &obj, someArgs); // first arg is pointer to member function, second is pointer to object
+
+5. Static member function
+	class MyClass {
+	public:
+		static void staticMemberFunction(int someArgs) {
+			// Function code here
+		}
+	};
+	std::thread t1(&MyClass::staticMemberFunction, someArgs); // like normal function pointer
+
+Join Detach Joinable
+	если мы вызвали join мы будем ждать пока поток завершится там где мы взывали join!
+	два раза вызвать join нельзя - будет ошибка
+	нужно писать joinable для этого 
+	если мы вызвали detach поток отделяется от основного потока и работает сам по себе
+
+Mutex and Race Condition
+	Когда несколько потоков обращаются к одним и тем же данным одновременно, 
+	может возникнуть
+
+	Race Condition
+	int myAccount = 0;
+	
+	void addMoney(){
+		++myAccount;
+	}
+	
 	int main(){
-		C c;
-		c.f(10);    // CE потому что f(int) private
-		У нас есть однозначный кандидат f(int) но он приватный (иначе мы бы получили CE как в пример ниже)
-		c.f(10.5f); // OK
-		с.f(3.14);  // CE потому что f(int) private и f(float) не подходит)
-		Мы сначала смотрим на версию какая нам подходит лучше
-		НО что версия с int что с float они обе плохи потому что мы 
-		кастуем вниз и обрезаем 
-		ЗНАЧИТ неоднозначность и ошибка компиляции
-		До проверка приватности не доходит
+		std::thread t1(addMoney);
+		std::thread t2(addMoney);
+		t1.join();
+		t2.join();
+		std::cout << myAccount << std::endl; // expected 2 but can
 	}
+	Fix using Mutex
+	std::mutex mtx;
+		void addMoney() {
+			mtx.lock();
+			++myAccount;
+			mtx.unlock();
+		}
+	RAII version of mutex is std::lock_guard
+		void addMoney() {
+			std::mutex mtx;
+			std::lock_guard<std::mutex> lock(mtx); // lock acquired here
+			++myAccount;
+		} // lock released here when lock goes out of scope
+	unique_lock more 
 
-	Приватность сделана для того чтобы не вызывать 
-	поэтому она и проверяется первым делом при компиляции
+	Deadlock
+
 	
-
-	3.2 Friend функции и классы
-	class MyClass {
-		private:
-			int secretData;
-		public:
-			MyClass(int data) : secretData(data) {}
-			friend void revealSecret(const MyClass& obj);
-	};
-	void revealSecret(const MyClass& obj) {
-		std::cout << obj.secretData << std::endl;
-	}
-
-	3.3 Member inistializer list
-	class MyClass {
-	private:
-		int a;
-		double b;
-		public:
-		MyClass(int x, double y) : a(x), b(y) {} // Member initializer list
-		};
-	Это однозначно нужно для константных полей и ссылок 
-	потому что их нужно инициализировать сразу
-	А иначе мы создаем объект по умолчанию а потом присваиваем значение
-
-	{} это может быть 
-	1 обычная инициализация через вызов конструктора
-	Complex c{3, 4}; // Вызов конструктора Complex(3, 4)}
-	2 через список инициализации
-	MyVector c = {3, 4. 1, 2}; 
-	3 Агрегатная инициализация
-	struct Point {
-		int x;
-		int y;
-	};
-	Point p{10, 20}; // Агрегатная инициализация
