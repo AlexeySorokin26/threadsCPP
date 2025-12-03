@@ -168,6 +168,53 @@ Mutex and Race Condition
 			++myAccount;
 			mtx.unlock();
 		}
+
+	mutex.try_lock() 
+	if(try_lock){
+		// critical section
+	} else {
+		// could not get the lock
+	})
+
+	void safe_operation() {
+    while (true) {
+        if (mtx1.try_lock()) {
+            if (mtx2.try_lock()) {
+                // Оба мьютекса захвачены
+                std::cout << "Critical section executed\n";
+                mtx2.unlock();
+                mtx1.unlock();
+                break;
+            } else {
+                // Не удалось захватить mtx2 - освобождаем mtx1
+                mtx1.unlock();
+                std::this_thread::yield(); // Даем шанс другим потокам
+            }
+		}
+		}
+	}
+	There is also std::try_lock(mtx1, mtx2, ...);
+	int result = std::try_lock(m1, m2, m3);
+
+	if (result == -1) {
+	    // Все мьютексы захвачены успешно
+	} else {
+	    // Мьютекс под индексом 'result' не удалось захватить
+	    // Все уже захваченные мьютексы автоматически освобождаются!
+	}
+	ЗАЧЕМ
+	// ПЛОХО: Риск deadlock!
+	void transfer(Account& a, Account& b, int amount) {
+	    std::lock_guard<std::mutex> lock1(a.mtx);  // Захватили A
+	    std::lock_guard<std::mutex> lock2(b.mtx);  // Захватили B
+	    // ... операция перевода
+	}
+	
+	// Если в другом потоке:
+	// std::lock_guard<std::mutex> lock1(b.mtx);  // Сначала B
+	// std::lock_guard<std::mutex> lock2(a.mtx);  // Потом A
+	// DEADLOCK!
+
 	RAII version of mutex is std::lock_guard
 		void addMoney() {
 			std::mutex mtx;
